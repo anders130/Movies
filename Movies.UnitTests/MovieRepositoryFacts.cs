@@ -26,6 +26,7 @@ public class MovieRepositoryFacts
             _context.DeleteAll<Movie>();
             _context.SaveChanges();
             _context.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         [Fact]
@@ -77,6 +78,15 @@ public class MovieRepositoryFacts
 
             // Assert
             movies.Should().BeEquivalentTo(movieList);
+        }
+        [Fact]
+        public void ReturnsEmptyList()
+        {
+            // Act
+            var movies = _movieRepository.GetMovies();
+
+            // Assert
+            movies.Should().BeEmpty();
         }
     }
 }

@@ -7,9 +7,9 @@ public class MovieRepository : IMovieRepository
 {
     private readonly MovieDbContext _context;
 
-    public MovieRepository(MovieDbContext dbContext)
+    public MovieRepository(MovieDbContext context)
     {
-        _context = dbContext;
+        _context = context;
     }
 
     public List<Movie> GetMovies()
