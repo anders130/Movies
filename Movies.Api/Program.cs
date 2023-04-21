@@ -9,7 +9,7 @@ builder.Services.AddFastEndpoints();
 // Add services to the container.
 builder.Services.AddDbContext<MovieDbContext>(options =>
     options.UseInMemoryDatabase(databaseName: "MovieDatabase"), ServiceLifetime.Singleton);
-builder.Services.AddSingleton<IMovieRepository, MovieRepository>();
+builder.Services.AddSingleton<IMovieRepository, MockMovieRepository>();
 
 var app = builder.Build();
 
