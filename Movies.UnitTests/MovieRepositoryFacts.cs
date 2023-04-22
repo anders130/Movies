@@ -1,39 +1,33 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
 using Movies.Api.Data;
 using Movies.Api.Models;
 using Movies.Api.Services;
 using Movies.Api.Utils;
+using Xunit.Abstractions;
 
 namespace Movies.UnitTests;
 
-public class MovieRepositoryFacts
+public sealed class MovieRepositoryFacts
 {
-    public class GetMoviesFacts : IDisposable
+    private static (MovieDbContext, IMovieRepository) Init([CallerMemberName] string name = "")
     {
-        private readonly IMovieRepository _movieRepository;
-        private readonly MovieDbContext _context;
-        public GetMoviesFacts()
-        {
-            var options = new DbContextOptionsBuilder<MovieDbContext>()
-                .UseInMemoryDatabase(databaseName: "MovieDatabase")
-                .Options;
+        var options = new DbContextOptionsBuilder<MovieDbContext>()
+            .UseInMemoryDatabase(databaseName: name + "MovieDatabase")
+            .Options;
 
-            _context = new MovieDbContext(options);
-            _movieRepository = new MovieRepository(_context);
-        }
-        public void Dispose()
-        {
-            _context.DeleteAll<Movie>();
-            _context.SaveChanges();
-            _context.Dispose();
-            GC.SuppressFinalize(this);
-        }
-
+        var context = new MovieDbContext(options);
+        var movieRepository = new MovieRepository(context);
+        return (context, movieRepository);
+    }
+    public sealed class GetMoviesFacts
+    {
         [Fact]
         public void ReturnsExpectedCount()
         {
             // Arrange
-            _context.Movies.AddRange(
+            var (context, movieRepository) = Init();
+            context.Movies.AddRange(
                 new Movie
                 {
                     Id = 1,
@@ -44,10 +38,10 @@ public class MovieRepositoryFacts
                     Id = 2,
                     Name = "Bar"
                 });
-            _context.SaveChanges();
+            context.SaveChanges();
 
             // Act
-            var movies = _movieRepository.GetMovies();
+            var movies = movieRepository.GetMovies();
 
             // Assert
             movies.Count.Should().Be(2);
@@ -57,6 +51,7 @@ public class MovieRepositoryFacts
         public void ReturnsExpectedValues()
         {
             // Arrange
+            var (context, movieRepository) = Init();
             var movieList = new List<Movie>
             {
                 new()
@@ -70,11 +65,11 @@ public class MovieRepositoryFacts
                     Name = "Bar"
                 }
             };
-            _context.Movies.AddRange(movieList);
-            _context.SaveChanges();
+            context.Movies.AddRange(movieList);
+            context.SaveChanges();
 
             // Act
-            var movies = _movieRepository.GetMovies();
+            var movies = movieRepository.GetMovies();
 
             // Assert
             movies.Should().BeEquivalentTo(movieList);
@@ -82,11 +77,62 @@ public class MovieRepositoryFacts
         [Fact]
         public void ReturnsEmptyList()
         {
+            // Arrange
+            var (_, movieRepository) = Init();
             // Act
-            var movies = _movieRepository.GetMovies();
+            var movies = movieRepository.GetMovies();
 
             // Assert
             movies.Should().BeEmpty();
+        }
+    }
+
+    public sealed class CreateMovieFacts
+    {
+        [Fact]
+        public void ReturnsRightId()
+        {
+            // Arrange
+            var (context, movieRepository) = Init();
+            var movie1 = new Movie
+            {
+                Name = "Foo"
+            };
+            context.Movies.Add(movie1);
+            context.SaveChanges();
+            var movie2 = new Movie
+            {
+                Name = "Bar"
+            };
+            // Act
+            var response = movieRepository.CreateMovie(movie2);
+
+            // Assert
+            response.Value.Should().Be(2);
+        }
+        [Fact]
+        public void ReturnsAlreadyExists()
+        {
+            // Arrange
+            var (context, movieRepository) = Init();
+            var movie1 = new Movie
+            {
+                Id = 1,
+                Name = "Foo"
+            };
+            context.Movies.Add(movie1);
+            context.SaveChanges();
+            var movie2 = new Movie
+            {
+                Id = 1,
+                Name = "Bar"
+            };
+
+            // Act
+            var response = movieRepository.CreateMovie(movie2);
+
+            // Assert
+            response.Value.Should().BeOfType<AlreadyExists>();
         }
     }
 }
