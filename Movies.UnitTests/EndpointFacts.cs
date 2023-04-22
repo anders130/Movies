@@ -3,6 +3,7 @@ using Movies.Api.Data;
 using Movies.Api.Models;
 using Movies.Api.Services;
 using Movies.Api.Endpoints;
+using Movies.Api.Requests;
 
 namespace Movies.UnitTests;
 
@@ -85,6 +86,35 @@ public sealed class EndpointFacts
             // Assert
             response.Should().NotBeNull();
             response.Movies.Should().BeEmpty();
+        }
+    }
+    public sealed class CreateMovieEndpointFacts
+    {
+        private static (MovieDbContext, CreateMovieEndpoint) Init()
+        {
+            var context = MovieDbContextUtils.GetUniqueMemoryMovieDbContext();
+            var movieRepository = new MovieRepository(context);
+            var endpoint = Factory.Create<CreateMovieEndpoint>(movieRepository);
+            return (context, endpoint);
+        }
+
+        [Fact]
+        public async void ReturnedIdWasCreated()
+        {
+            // Arrange
+            var (context, endpoint) = Init();
+            var req = new CreateMovieRequest
+            {
+                Name = "Foo"
+            };
+
+            // Act
+            await endpoint.HandleAsync(req, default);
+            var response = endpoint.Response;
+            var movie = await context.Movies.FindAsync(response.Id);
+
+            // Assert
+            movie.Should().NotBeNull();
         }
     }
 }
