@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Movies.Api.Data;
 using Movies.Api.Models;
 using Movies.Api.Services;
@@ -10,13 +9,9 @@ namespace Movies.UnitTests;
 
 public sealed class MovieRepositoryFacts
 {
-    private static (MovieDbContext, IMovieRepository) Init([CallerMemberName] string name = "")
+    private static (MovieDbContext, IMovieRepository) Init()
     {
-        var options = new DbContextOptionsBuilder<MovieDbContext>()
-            .UseInMemoryDatabase(databaseName: name + "MovieDatabase")
-            .Options;
-
-        var context = new MovieDbContext(options);
+        var context = MovieDbContextUtils.GetUniqueMemoryMovieDbContext();
         var movieRepository = new MovieRepository(context);
         return (context, movieRepository);
     }
