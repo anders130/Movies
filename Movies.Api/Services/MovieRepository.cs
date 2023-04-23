@@ -36,4 +36,9 @@ public class MovieRepository : IMovieRepository
             return new NotFound();
         return movie;
     }
+
+    public List<Movie> GetMoviesByName(string name)
+    {
+        return _context.Movies.Where(m => string.Equals(m.Name, name, StringComparison.CurrentCultureIgnoreCase)).ToList();
+    }
 }
