@@ -1,9 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Movies.Api.Data;
+﻿using Movies.Api.Data;
 using Movies.Api.Models;
 using Movies.Api.Services;
-using Movies.Api.Utils;
-using Xunit.Abstractions;
+using OneOf.Types;
 
 namespace Movies.UnitTests;
 
@@ -128,6 +126,54 @@ public sealed class MovieRepositoryFacts
 
             // Assert
             response.Value.Should().BeOfType<AlreadyExists>();
+        }
+    }
+
+    public sealed class GetMovieByIdFacts
+    {
+        [Fact]
+        public void GetRightMovie()
+        {
+            // Arrange
+            var (context, movieRepository) = Init();
+            var movie1 = new Movie
+            {
+                Name = "Foo"
+            };
+            var movie2 = new Movie
+            {
+                Name = "Bar"
+            };
+            context.Movies.AddRange(movie1, movie2);
+            context.SaveChanges();
+
+            // Act
+            var response = movieRepository.GetMovieById(2);
+
+            // Assert
+            response.Value.Should().Be(movie2);
+        }
+        [Fact]
+        public void GetNotFound()
+        {
+            // Arrange
+            var (context, movieRepository) = Init();
+            var movie1 = new Movie
+            {
+                Name = "Foo"
+            };
+            var movie2 = new Movie
+            {
+                Name = "Bar"
+            };
+            context.Movies.AddRange(movie1, movie2);
+            context.SaveChanges();
+
+            // Act
+            var response = movieRepository.GetMovieById(3);
+            
+            // Assert
+            response.Value.Should().BeOfType<NotFound>();
         }
     }
 }
