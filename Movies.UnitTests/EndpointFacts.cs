@@ -1,4 +1,5 @@
-﻿using FastEndpoints;
+﻿using System.Net;
+using FastEndpoints;
 using Movies.Api.Data;
 using Movies.Api.Models;
 using Movies.Api.Services;
@@ -115,6 +116,57 @@ public sealed class EndpointFacts
 
             // Assert
             movie.Should().NotBeNull();
+        }
+    }
+    public sealed class GetMovieByIdEndpointFacts
+    {
+        private static (MovieDbContext, GetMovieByIdEndpoint) Init()
+        {
+            var context = MovieDbContextUtils.GetUniqueMemoryMovieDbContext();
+            var movieRepository = new MovieRepository(context);
+            var endpoint = Factory.Create<GetMovieByIdEndpoint>(movieRepository);
+            return (context, endpoint);
+        }
+
+        [Fact]
+        public async void GetRightMovie()
+        {
+            // Arrange
+            var (context, endpoint) = Init();
+            var movie = new Movie
+            {
+                Name = "Foo"
+            };
+            context.Movies.Add(movie);
+            await context.SaveChangesAsync();
+            var req = new GetMovieByIdRequest()
+            {
+                Id = 1
+            };
+
+            // Act
+            await endpoint.HandleAsync(req, default);
+            var response = endpoint.Response;
+
+            // Assert
+            response.Should().BeEquivalentTo(movie);
+        }
+        [Fact]
+        public async void GetNotFound()
+        {
+            // Arrange
+            var (context, endpoint) = Init();
+            var req = new GetMovieByIdRequest()
+            {
+                Id = 1
+            };
+
+            // Act
+            await endpoint.HandleAsync(req, default);
+            var statusCode = endpoint.HttpContext.Response.StatusCode;
+
+            // Assert
+            statusCode.Should().Be((int)HttpStatusCode.NotFound);
         }
     }
 }
