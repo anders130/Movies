@@ -176,4 +176,91 @@ public sealed class MovieRepositoryFacts
             response.Value.Should().BeOfType<NotFound>();
         }
     }
+
+    public sealed class GetMoviesByNameFacts
+    {
+        [Fact]
+        public void GetEmptyList()
+        {
+            // Arrange
+            var (context, movieRepository) = Init();
+            context.Movies.AddRange(new Movie { Name = "Foo" }, new Movie{ Name = "Bar" });
+            context.SaveChanges();
+
+            // Act
+            var movies = movieRepository.GetMoviesByName("pREy");
+
+            // Assert
+            movies.Should().BeEmpty();
+        }
+        [Fact]
+        public void GetOneMovie()
+        {
+            // Arrange
+            var (context, movieRepository) = Init();
+            var movie = new Movie
+            {
+                Name = "Prey"
+            };
+            context.Movies.AddRange(new Movie {  Name = "Foo" }, movie);
+            context.SaveChanges();
+
+            // Act
+            var movies = movieRepository.GetMoviesByName("pREy");
+
+            // Assert
+            movies.Should().NotBeEmpty();
+            movies.Should().HaveCount(1);
+            movies.First().Name.Should().Be(movie.Name);
+        }
+        [Fact]
+        public void GetTwoMoviesWithSameName()
+        {
+            // Arrange
+            var (context, movieRepository) = Init();
+            var movie = new Movie
+            {
+                Name = "Prey"
+            }; 
+            var movie2 = new Movie
+            {
+                Name = "Prey"
+            };
+            context.Movies.AddRange(movie, movie2);
+            context.SaveChanges();
+
+            // Act
+            var movies = movieRepository.GetMoviesByName("pREy");
+
+            // Assert
+            movies.Should().NotBeEmpty();
+            movies.Should().HaveCount(2);
+            movies.Should().Contain(movie);
+            movies.Should().Contain(movie2);
+        }
+        [Fact]
+        public void GetOneMovieOfSimilarNames()
+        {
+            // Arrange
+            var (context, movieRepository) = Init();
+            var movie = new Movie
+            {
+                Name = "Prey"
+            };
+            var movie2 = new Movie
+            {
+                Name = "Prey2"
+            };
+            context.Movies.AddRange(movie, movie2);
+            context.SaveChanges();
+
+            // Act
+            var movies = movieRepository.GetMoviesByName("pREy");
+
+            // Assert
+            movies.Should().NotBeEmpty();
+            movies.Should().HaveCount(1);
+            movies.Should().Contain(movie);
+        }
+    }
 }
