@@ -263,4 +263,44 @@ public sealed class MovieRepositoryFacts
             movies.Should().Contain(movie);
         }
     }
+
+    public sealed class DeleteMovieFacts
+    {
+        [Fact]
+        public void ReturnsSuccess()
+        {
+            // Arrange
+            var (context, movieRepository) = Init();
+            context.Movies.Add(new Movie
+            {
+                Name = "Foo"
+            });
+            context.SaveChanges();
+
+            // Act
+            var response = movieRepository.DeleteMovie(1);
+
+            // Assert
+            response.Value.Should().BeOfType<Success>();
+            context.Movies.Should().BeEmpty();
+        }
+        [Fact]
+        public void ReturnsNotFound()
+        {
+            // Arrange
+            var (context, movieRepository) = Init();
+            context.Movies.Add(new Movie
+            {
+                Name = "Foo"
+            });
+            context.SaveChanges();
+
+            // Act
+            var response = movieRepository.DeleteMovie(2);
+
+            // Assert
+            response.Value.Should().BeOfType<NotFound>();
+            context.Movies.Should().HaveCount(1);
+        }
+    }
 }
