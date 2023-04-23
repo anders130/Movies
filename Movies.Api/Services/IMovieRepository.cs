@@ -8,4 +8,5 @@ public interface IMovieRepository
 {
     List<Movie> GetMovies();
     OneOf<int, AlreadyExists> CreateMovie(Movie movie);
+    OneOf<Movie, NotFound> GetMovieById(int id);
 }
