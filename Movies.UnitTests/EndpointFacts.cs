@@ -283,4 +283,61 @@ public sealed class EndpointFacts
             response.Should().Contain(movie);
         }
     }
+    public sealed class DeleteMovieEndpointFacts
+    {
+        private static (MovieDbContext, DeleteMovieEndpoint) Init()
+        {
+            var context = MovieDbContextUtils.GetUniqueMemoryMovieDbContext();
+            var movieRepository = new MovieRepository(context);
+            var endpoint = Factory.Create<DeleteMovieEndpoint>(movieRepository);
+            return (context, endpoint);
+        }
+
+        [Fact]
+        public async void DeletedMovie()
+        {
+            // Arrange
+            var (context, endpoint) = Init();
+            context.Movies.Add(new Movie
+            {
+                Name = "Foo"
+            });
+            await context.SaveChangesAsync();
+            var req = new DeleteMovieRequest
+            {
+                Id = 1
+            };
+
+            // Act
+            await endpoint.HandleAsync(req, default);
+            var statusCode = endpoint.HttpContext.Response.StatusCode;
+
+            // Assert
+            statusCode.Should().Be(204);
+            context.Movies.Should().BeEmpty();
+        }
+        [Fact]
+        public async void MovieNotFound()
+        {
+            // Arrange
+            var (context, endpoint) = Init();
+            context.Movies.Add(new Movie
+            {
+                Name = "Foo"
+            });
+            await context.SaveChangesAsync();
+            var req = new DeleteMovieRequest
+            {
+                Id = 2
+            };
+
+            // Act
+            await endpoint.HandleAsync(req, default);
+            var statusCode = endpoint.HttpContext.Response.StatusCode;
+
+            // Assert
+            statusCode.Should().Be(404);
+            context.Movies.Should().HaveCount(1);
+        }
+    }
 }
