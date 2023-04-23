@@ -169,4 +169,118 @@ public sealed class EndpointFacts
             statusCode.Should().Be((int)HttpStatusCode.NotFound);
         }
     }
+    public sealed class GetMoviesByNameEndpointFacts
+    {
+        private static (MovieDbContext, GetMoviesByNameEndpoint) Init()
+        {
+            var context = MovieDbContextUtils.GetUniqueMemoryMovieDbContext();
+            var movieRepository = new MovieRepository(context);
+            var endpoint = Factory.Create<GetMoviesByNameEndpoint>(movieRepository);
+            return (context, endpoint);
+        }
+
+        [Fact]
+        public async void GetEmptyList()
+        {
+            // Arrange
+            var (context, endpoint) = Init();
+            context.Movies.AddRange(new Movie { Name = "Foo" }, new Movie { Name = "Bar" });
+            await context.SaveChangesAsync();
+            var req = new GetMoviesByNameRequest
+            {
+                Name = "Test"
+            };
+
+            // Act
+            await endpoint.HandleAsync(req, default);
+            var response = endpoint.Response;
+
+            // Assert
+            response.Should().BeEmpty();
+        }
+        [Fact]
+        public async void GetOneMovie()
+        {
+            // Arrange
+            var (context, endpoint) = Init();
+            var movie = new Movie
+            {
+                Name = "Prey"
+            };
+            context.Movies.AddRange(new Movie { Name = "Foo" }, movie);
+            await context.SaveChangesAsync();
+            var req = new GetMoviesByNameRequest
+            {
+                Name = "pREy"
+            };
+
+            // Act
+            await endpoint.HandleAsync(req, default);
+            var response = endpoint.Response;
+
+            // Assert
+            response.Should().NotBeEmpty();
+            response.Should().HaveCount(1);
+            response.First().Name.Should().Be(movie.Name);
+        }
+        [Fact]
+        public async void GetTwoMoviesWithSameName()
+        {
+            // Arrange
+            var (context, endpoint) = Init();
+            var movie = new Movie
+            {
+                Name = "Prey"
+            };
+            var movie2 = new Movie
+            {
+                Name = "Prey"
+            };
+            context.Movies.AddRange(movie, movie2);
+            await context.SaveChangesAsync();
+            var req = new GetMoviesByNameRequest
+            {
+                Name = "pREy"
+            };
+
+            // Act
+            await endpoint.HandleAsync(req, default);
+            var response = endpoint.Response;
+
+            // Assert
+            response.Should().NotBeEmpty();
+            response.Should().HaveCount(2);
+            response.Should().Contain(movie);
+            response.Should().Contain(movie2);
+        }
+        [Fact]
+        public async void GetOneMovieOfSimilarNames()
+        {
+            // Arrange
+            var (context, endpoint) = Init();
+            var movie = new Movie
+            {
+                Name = "Prey"
+            };
+            var movie2 = new Movie
+            {
+                Name = "Prey2"
+            };
+            context.Movies.AddRange(movie, movie2);
+            await context.SaveChangesAsync();
+            var req = new GetMoviesByNameRequest
+            {
+                Name = "pREy"
+            };
+
+            // Act
+            await endpoint.HandleAsync(req, default);
+            var response = endpoint.Response;
+
+            // Assert
+            response.Should().NotBeEmpty();
+            response.Should().HaveCount(1);
+            response.Should().Contain(movie);
+        }
+    }
 }
