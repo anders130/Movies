@@ -41,4 +41,14 @@ public class MovieRepository : IMovieRepository
     {
         return _context.Movies.Where(m => string.Equals(m.Name, name, StringComparison.CurrentCultureIgnoreCase)).ToList();
     }
+
+    public OneOf<Success, NotFound> DeleteMovie(int id)
+    {
+        var movie = _context.Movies.Find(id);
+        if (movie is null)
+            return new NotFound();
+        _context.Movies.Remove(movie);
+        _context.SaveChanges();
+        return new Success();
+    }
 }
