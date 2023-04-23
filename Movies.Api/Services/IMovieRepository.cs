@@ -10,4 +10,5 @@ public interface IMovieRepository
     OneOf<int, AlreadyExists> CreateMovie(Movie movie);
     OneOf<Movie, NotFound> GetMovieById(int id);
     List<Movie> GetMoviesByName(string name);
+    OneOf<Success, NotFound> DeleteMovie(int id);
 }
