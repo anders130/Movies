@@ -28,4 +28,12 @@ public class MovieRepository : IMovieRepository
         _context.SaveChanges();
         return movie.Id;
     }
+
+    public OneOf<Movie, NotFound> GetMovieById(int id)
+    {
+        var movie = _context.Movies.Find(id);
+        if (movie is null)
+            return new NotFound();
+        return movie;
+    }
 }
