@@ -5,7 +5,12 @@ VisualStudioVersion = 17.6.33617.297
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Movies.Api", "Movies.Api\Movies.Api.csproj", "{CD85DDC7-17FE-4A0A-8711-853C27BC42E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movies.UnitTests", "Movies.UnitTests\Movies.UnitTests.csproj", "{C26D73B2-C6AA-40A0-AB3F-E61BAEE6E8A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Movies.UnitTests", "Movies.UnitTests\Movies.UnitTests.csproj", "{C26D73B2-C6AA-40A0-AB3F-E61BAEE6E8A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{7C312B62-2410-4EA5-9C93-EA6BC9A2C8BD}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yaml = docker-compose.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
