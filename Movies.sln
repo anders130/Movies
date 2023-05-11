@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{7C312B62-2410-4EA5-9C93-EA6BC9A2C8BD}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yaml = docker-compose.yaml
+		init.sql = init.sql
 	EndProjectSection
 EndProject
 Global
