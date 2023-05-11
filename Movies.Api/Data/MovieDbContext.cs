@@ -3,7 +3,7 @@ using Movies.Api.Models;
 
 namespace Movies.Api.Data;
 
-public class MovieDbContext : DbContext
+public sealed class MovieDbContext : DbContext
 {
     public DbSet<Movie> Movies { get; set; } = null!;
 

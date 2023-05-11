@@ -6,3 +6,12 @@ services:
             dockerfile: ./Movies.Api/Dockerfile
         ports:
             - "8080:80"
+        depends_on:
+            - db
+    db:
+        image: postgres
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+        volumes:
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
