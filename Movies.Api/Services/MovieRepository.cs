@@ -39,7 +39,7 @@ public class MovieRepository : IMovieRepository
 
     public List<Movie> GetMoviesByName(string name)
     {
-        return _context.Movies.Where(m => string.Equals(m.Name, name, StringComparison.CurrentCultureIgnoreCase)).ToList();
+        return _context.Movies.Where(m => m.Name!.ToLower().Equals(name.ToLower())).ToList();
     }
 
     public OneOf<Success, NotFound> DeleteMovie(int id)
