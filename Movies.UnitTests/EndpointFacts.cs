@@ -5,6 +5,7 @@ using Movies.Api.Models;
 using Movies.Api.Requests;
 using Movies.Api.Services;
 using System.Net;
+using Movies.Api.Mappers;
 
 namespace Movies.UnitTests;
 
@@ -125,6 +126,7 @@ public sealed class EndpointFacts
             var context = MovieDbContextUtils.GetUniqueMemoryMovieDbContext();
             var movieRepository = new MovieRepository(context);
             var endpoint = Factory.Create<GetMovieByIdEndpoint>(movieRepository);
+            endpoint.Map = new GetMovieByIdMapper();
             return (context, endpoint);
         }
 
@@ -196,7 +198,7 @@ public sealed class EndpointFacts
             var response = endpoint.Response;
 
             // Assert
-            response.Should().BeEmpty();
+            response.Movies.Should().BeEmpty();
         }
         [Fact]
         public async void GetOneMovie()
@@ -219,9 +221,9 @@ public sealed class EndpointFacts
             var response = endpoint.Response;
 
             // Assert
-            response.Should().NotBeEmpty();
-            response.Should().HaveCount(1);
-            response.First().Name.Should().Be(movie.Name);
+            response.Movies.Should().NotBeEmpty();
+            response.Movies.Should().HaveCount(1);
+            response.Movies.First().Name.Should().Be(movie.Name);
         }
         [Fact]
         public async void GetTwoMoviesWithSameName()
@@ -248,10 +250,10 @@ public sealed class EndpointFacts
             var response = endpoint.Response;
 
             // Assert
-            response.Should().NotBeEmpty();
-            response.Should().HaveCount(2);
-            response.Should().Contain(movie);
-            response.Should().Contain(movie2);
+            response.Movies.Should().NotBeEmpty();
+            response.Movies.Should().HaveCount(2);
+            response.Movies.Should().Contain(movie);
+            response.Movies.Should().Contain(movie2);
         }
         [Fact]
         public async void GetOneMovieOfSimilarNames()
@@ -278,9 +280,9 @@ public sealed class EndpointFacts
             var response = endpoint.Response;
 
             // Assert
-            response.Should().NotBeEmpty();
-            response.Should().HaveCount(1);
-            response.Should().Contain(movie);
+            response.Movies.Should().NotBeEmpty();
+            response.Movies.Should().HaveCount(1);
+            response.Movies.Should().Contain(movie);
         }
     }
     public sealed class DeleteMovieEndpointFacts
