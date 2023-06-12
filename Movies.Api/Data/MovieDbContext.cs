@@ -8,7 +8,9 @@ public sealed class MovieDbContext : DbContext
     public DbSet<Movie> Movies { get; set; } = null!;
 
     public MovieDbContext(DbContextOptions<MovieDbContext> options) : base(options)
-    { }
+    {
+        Database.EnsureCreated();
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
