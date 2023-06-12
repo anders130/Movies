@@ -10,7 +10,7 @@ public sealed class MockMovieRepository : MovieRepository
         context.Movies.AddRange(new Movie
         {
             Name = "Star Trek - Der Film"
-        },new Movie
+        }, new Movie
         {
             Name = "Star Trek II- Der Zorn des Khan"
         }, new Movie

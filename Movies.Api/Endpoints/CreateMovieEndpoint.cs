@@ -1,8 +1,8 @@
-﻿using System.Net;
-using Movies.Api.Models;
+﻿using Movies.Api.Models;
 using Movies.Api.Requests;
 using Movies.Api.Responses;
 using Movies.Api.Services;
+using System.Net;
 
 namespace Movies.Api.Endpoints;
 

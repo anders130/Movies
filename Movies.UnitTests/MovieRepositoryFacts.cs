@@ -171,7 +171,7 @@ public sealed class MovieRepositoryFacts
 
             // Act
             var response = movieRepository.GetMovieById(3);
-            
+
             // Assert
             response.Value.Should().BeOfType<NotFound>();
         }
@@ -184,7 +184,7 @@ public sealed class MovieRepositoryFacts
         {
             // Arrange
             var (context, movieRepository) = Init();
-            context.Movies.AddRange(new Movie { Name = "Foo" }, new Movie{ Name = "Bar" });
+            context.Movies.AddRange(new Movie { Name = "Foo" }, new Movie { Name = "Bar" });
             context.SaveChanges();
 
             // Act
@@ -202,7 +202,7 @@ public sealed class MovieRepositoryFacts
             {
                 Name = "Prey"
             };
-            context.Movies.AddRange(new Movie {  Name = "Foo" }, movie);
+            context.Movies.AddRange(new Movie { Name = "Foo" }, movie);
             context.SaveChanges();
 
             // Act
@@ -221,7 +221,7 @@ public sealed class MovieRepositoryFacts
             var movie = new Movie
             {
                 Name = "Prey"
-            }; 
+            };
             var movie2 = new Movie
             {
                 Name = "Prey"
