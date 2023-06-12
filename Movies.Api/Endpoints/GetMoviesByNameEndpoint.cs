@@ -1,10 +1,10 @@
-﻿using Movies.Api.Models;
-using Movies.Api.Requests;
+﻿using Movies.Api.Requests;
+using Movies.Api.Responses;
 using Movies.Api.Services;
 
 namespace Movies.Api.Endpoints;
 
-public sealed class GetMoviesByNameEndpoint : Endpoint<GetMoviesByNameRequest, List<Movie>>
+public sealed class GetMoviesByNameEndpoint : Endpoint<GetMoviesByNameRequest, GetMoviesByNameResponse>
 {
     private readonly IMovieRepository _movieRepository;
 
@@ -21,7 +21,10 @@ public sealed class GetMoviesByNameEndpoint : Endpoint<GetMoviesByNameRequest, L
 
     public override async Task HandleAsync(GetMoviesByNameRequest req, CancellationToken ct)
     {
-        var movies = _movieRepository.GetMoviesByName(req.Name);
-        await SendAsync(movies, cancellation: ct);
+        var response = new GetMoviesByNameResponse
+        {
+            Movies = _movieRepository.GetMoviesByName(req.Name)
+        };
+        await SendAsync(response, cancellation: ct);
     }
 }
