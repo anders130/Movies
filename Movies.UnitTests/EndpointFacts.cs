@@ -1,11 +1,11 @@
 ﻿using FastEndpoints;
 using Movies.Api.Data;
 using Movies.Api.Endpoints;
+using Movies.Api.Mappers;
 using Movies.Api.Models;
 using Movies.Api.Requests;
 using Movies.Api.Services;
 using System.Net;
-using Movies.Api.Mappers;
 
 namespace Movies.UnitTests;
 
